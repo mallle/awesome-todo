@@ -1,6 +1,6 @@
 # Awesome Todo (awesome-todo)
 
-Totorial for learning quarsar
+Totorial for learning quasar
 
 An awesome todo app
 
