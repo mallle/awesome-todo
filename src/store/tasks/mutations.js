@@ -7,3 +7,7 @@ export function updateTask(state, payload) {
 export function deleteTask(state, id) {
 	Vue.delete(state.tasks, id);
 }
+
+export function addTask(state, payload) {
+	Vue.set(state.tasks, payload.id, payload.task);
+}

@@ -13,7 +13,7 @@
 				task.name
 			}}</q-item-label>
 		</q-item-section>
-		<q-item-section side>
+		<q-item-section side v-if="task.dueDate">
 			<div class="row">
 				<div class="column justify-center">
 					<q-icon size="18px" name="event" class="q-mr-xs" />
@@ -29,14 +29,28 @@
 			</div>
 		</q-item-section>
 		<q-item-section side>
-			<q-btn
-				flat
-				round
-				color="red"
-				icon="delete"
-				dense
-				@click.stop="promptToDelete(id)"
-			/>
+			<div class="row">
+				<q-btn
+					flat
+					round
+					color="primary"
+					icon="edit"
+					dense
+					@click.stop="showEditTask = true"
+				/>
+				<q-btn
+					flat
+					round
+					color="red"
+					icon="delete"
+					dense
+					@click.stop="promptToDelete(id)"
+				/>
+			</div>
+
+			<q-dialog v-model="showEditTask">
+				<EditTask @close="showEditTask = false" :task="task" :id="id" />
+			</q-dialog>
 		</q-item-section>
 	</q-item>
 </template>
@@ -44,9 +58,14 @@
 <script>
 import { mapActions } from "vuex";
 import { Dialog } from "quasar";
-
+import EditTask from "components/tasks/modals/EditTask";
 export default {
 	props: ["task", "id"],
+	data() {
+		return {
+			showEditTask: false
+		};
+	},
 	methods: {
 		...mapActions("tasks", ["updateTask", "deleteTask"]),
 		promptToDelete(id) {
@@ -61,6 +80,9 @@ export default {
 					this.deleteTask(id);
 				});
 		}
+	},
+	components: {
+		EditTask
 	}
 };
 </script>
