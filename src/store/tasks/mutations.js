@@ -11,3 +11,11 @@ export function deleteTask(state, id) {
 export function addTask(state, payload) {
 	Vue.set(state.tasks, payload.id, payload.task);
 }
+
+export function setSearch(state, value) {
+	state.search = value;
+}
+
+export function setSort(state, value) {
+	state.sort = value;
+}

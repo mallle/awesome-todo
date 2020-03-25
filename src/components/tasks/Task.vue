@@ -4,14 +4,16 @@
 		clickable
 		@click="updateTask({ id: id, updates: { completed: !task.completed } })"
 		:class="!task.completed ? 'bg-orange-1' : 'bg-green-1'"
+		v-touch-hold:1000.mouse="showEditTaskModal"
 	>
 		<q-item-section side top>
 			<q-checkbox :value="task.completed" class="no-pointer-events" />
 		</q-item-section>
 		<q-item-section>
-			<q-item-label :class="{ 'text-strikethrough': task.completed }">{{
-				task.name
-			}}</q-item-label>
+			<q-item-label
+				:class="{ 'text-strikethrough': task.completed }"
+				v-html="$options.filters.serachHighlight(task.name, search)"
+			></q-item-label>
 		</q-item-section>
 		<q-item-section side v-if="task.dueDate">
 			<div class="row">
@@ -20,10 +22,10 @@
 				</div>
 				<div class="column">
 					<q-item-label caption class="row justify-end">{{
-						task.dueDate
+						task.dueDate | niceDate
 					}}</q-item-label>
 					<q-item-label caption class="row justify-end"
-						><small>{{ task.dueTime }}</small></q-item-label
+						><small>{{ taskDueTime }}</small></q-item-label
 					>
 				</div>
 			</div>
@@ -36,7 +38,7 @@
 					color="primary"
 					icon="edit"
 					dense
-					@click.stop="showEditTask = true"
+					@click.stop="showEditTaskModal"
 				/>
 				<q-btn
 					flat
@@ -56,9 +58,13 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import { Dialog } from "quasar";
 import EditTask from "components/tasks/modals/EditTask";
+import { date } from "quasar";
+// destructuring to keep only what is needed
+const { formatDate } = date;
+
 export default {
 	props: ["task", "id"],
 	data() {
@@ -79,10 +85,37 @@ export default {
 				.onOk(() => {
 					this.deleteTask(id);
 				});
+		},
+		showEditTaskModal() {
+			this.showEditTask = true;
 		}
 	},
 	components: {
 		EditTask
+	},
+	filters: {
+		niceDate(value) {
+			return formatDate(value, "MMM D");
+		},
+		serachHighlight(value, search) {
+			if (search) {
+				let searchRegExp = new RegExp(search, "ig");
+				return value.replace(searchRegExp, match => {
+					return '<span class="bg-yellow-6">' + match + "</span>";
+				});
+			}
+			return value;
+		}
+	},
+	computed: {
+		...mapState("tasks", ["search"]),
+		...mapGetters("settings", ["settings"]),
+		taskDueTime() {
+			if (this.settings.show12HourTimeFormat) {
+				return formatDate(this.task.dueDate + " " + this.task.dueTime, "h:mmA");
+			}
+			return this.task.dueTime;
+		}
 	}
 };
 </script>

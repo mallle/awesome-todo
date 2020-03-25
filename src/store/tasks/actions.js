@@ -16,3 +16,11 @@ export function addTask({ commit }, task) {
 	};
 	commit("addTask", payload);
 }
+
+export function setSearch({ commit }, value) {
+	commit("setSearch", value);
+}
+
+export function setSort({ commit }, value) {
+	commit("setSort", value);
+}
