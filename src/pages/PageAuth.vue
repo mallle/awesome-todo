@@ -18,7 +18,6 @@
 
 			<q-tab-panels v-model="tab" animated>
 				<q-tab-panel name="login">
-					<div class="text-h6">Login</div>
 					<LoginRegister :tab="tab" />
 				</q-tab-panel>
 
@@ -35,7 +34,7 @@ import LoginRegister from "components/auth/LoginRegister";
 export default {
 	data() {
 		return {
-			tab: "register"
+			tab: "login"
 		};
 	},
 	components: {
